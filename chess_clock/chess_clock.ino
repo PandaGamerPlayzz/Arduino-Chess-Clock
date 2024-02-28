@@ -1,5 +1,3 @@
-#include <TM1637.h>
-
 #include <Arduino.h>
 #include <TM1637Display.h>
 

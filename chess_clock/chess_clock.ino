@@ -1,3 +1,5 @@
+#include <TM1637.h>
+
 #include <Arduino.h>
 #include <TM1637Display.h>
 
@@ -11,6 +13,8 @@ const int DIO2 = 5;
 const int BTN_P1 = A0;
 const int BTN_P2 = A1;
 const int BTN_RESET = A2;
+
+const int RESET_ARDUINO = A3;
 
 // Seven seg displays
 TM1637Display display1(CLK, DIO);
@@ -58,8 +62,8 @@ void loop() {
 
   Serial.println(btnResetState);
 
-  display1.setBrightness(0xff);
-  display2.setBrightness(0xff);
+  display1.showNumberDecEx(formatTime((int)timer1), (0x80 >> 1), false);
+  display2.showNumberDecEx(formatTime((int)timer2), (0x80 >> 1), false);
 
   if(active == true) {
     if(player == 1) {
@@ -77,24 +81,36 @@ void loop() {
 
       if(btnP2State == HIGH) player = 1;
     }
-  } else if(btnP1State == HIGH) {
+  } else if(btnP1State == HIGH && timer1 >= 60) {
     active = true;
     player = 1;
-  } else if(btnP2State == HIGH) {
+  } else if(btnP2State == HIGH && timer1 >= 60) {
     active = true;
     player = 2;
   } else if(btnResetState == HIGH) {
     timer1 += 60;
     timer2 += 60;
 
-    display1.showNumberDecEx(formatTime((int)timer1), (0x80 >> 1), true);
-    display2.showNumberDecEx(formatTime((int)timer2), (0x80 >> 1), true);
-
-    while(digitalRead(BTN_RESET) == HIGH) delay(10);
+    while(btnResetState == HIGH) delay(10);
   }
-  
-  display1.showNumberDecEx(formatTime((int)timer1), (0x80 >> 1), true);
-  display2.showNumberDecEx(formatTime((int)timer2), (0x80 >> 1), true);
+
+  if(timer1 <= 0 && active == true) {
+    timer1 = 0;
+    display1.showNumberDecEx(formatTime((int)timer1), (0x80 >> 1), false);
+
+    while(true) {
+      if(digitalRead(BTN_RESET)) digitalWrite(RESET_ARDUINO, HIGH);
+      delay(10);
+    }
+  } else if(timer2 <= 0 && active == true) {
+    timer2 = 0;
+    display2.showNumberDecEx(formatTime((int)timer2), (0x80 >> 1), false);
+
+    while(true) {
+      if(digitalRead(BTN_RESET)) digitalWrite(RESET_ARDUINO, HIGH);
+      delay(10);
+    }
+  }
 
   lastTime = currentTime;
 }

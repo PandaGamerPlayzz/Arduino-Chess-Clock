@@ -13,8 +13,11 @@
 TM1637Display display(CLK, DIO);
 TM1637Display display2(CLK2, DIO2);
 
-int timer1 = 500;
-int timer2 = 600;
+double timer1 = 500.0;
+double timer2 = 500.0;
+int player = 2;
+
+unsigned long lastTime = micros();
 
 int formatTime(int seconds) {
     int minutes = seconds / 60; // Convert seconds to minutes
@@ -27,17 +30,25 @@ void setup() {
 }
 
 void loop() {
-  timer1 -= 1;
-  timer2 -= 1; 
+  unsigned long currentTime = micros();
+  unsigned long deltaTime = (currentTime - lastTime);
 
-  display.setBrightness(0x0f);
-  display2.setBrightness(0x0f);
+  Serial.println(timer2);
 
-  if(n % 2 == 1) {
-    display.showNumberDecEx(formatTime(n), (0x80 >> 0), false);
-  } else {
-    display.showNumberDecEx(formatTime(n), (0x80 >> 1), false);
+  if(player == 1) {
+    timer1 -= deltaTime * 0.000001;
+
+    display.setBrightness(0xff);
+    display2.setBrightness(0x00);
+  } else if(player == 2) {
+    timer2 -= deltaTime * 0.000001;
+
+    display.setBrightness(0x00);
+    display2.setBrightness(0xff);
   }
 
-  delay(DELAY);
+  display.showNumberDecEx(formatTime((int)timer1), (0x80 >> 1), false);
+  display2.showNumberDecEx(formatTime((int)timer2), (0x80 >> 1), false);
+
+  lastTime = currentTime;
 }

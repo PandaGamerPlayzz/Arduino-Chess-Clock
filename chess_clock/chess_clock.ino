@@ -60,7 +60,6 @@ void checkForReset() {
       display1.setSegments(SEG_RSET);
       display2.setSegments(SEG_RSET);
 
-      // while(digitalRead(BTN_RESET) == HIGH) delay(10);
       resetArduino();
     }
   } else {

@@ -62,11 +62,15 @@ void loop() {
 
     display1.setBrightness(0xff);
     display2.setBrightness(0x00);
+
+    if(btnP1State == HIGH) player = 2;
   } else if(player == 2) {
     timer2 -= deltaTime * 0.000001;
 
     display1.setBrightness(0x00);
     display2.setBrightness(0xff);
+
+    if(btnP1State == HIGH) player = 1;
   }
   
   display1.showNumberDecEx(formatTime((int)timer1), (0x80 >> 1), false);

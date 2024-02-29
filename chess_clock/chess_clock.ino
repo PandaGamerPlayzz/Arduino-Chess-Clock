@@ -60,6 +60,7 @@ void checkForReset() {
       display1.setSegments(SEG_RSET);
       display2.setSegments(SEG_RSET);
 
+      // while(digitalRead(BTN_RESET) == HIGH) delay(10);
       resetArduino();
     }
   } else {
@@ -73,12 +74,6 @@ void setup() {
   pinMode(BTN_P1, INPUT);
   pinMode(BTN_P2, INPUT);
   pinMode(BTN_RESET, INPUT);
-
-  display1.setBrightness(0xff);
-  display1.showNumberDecEx(0, (0x80 >> 1), true);
-
-  display2.setBrightness(0xff);
-  display2.showNumberDecEx(0, (0x80 >> 1), true);
 
   while(digitalRead(BTN_RESET) == HIGH) delay(10);
 }
@@ -133,7 +128,7 @@ void loop() {
 
   if(timer1 <= 0 && active == true) {
     timer1 = 0;
-    display1.showNumberDecEx(formatTime((int)timer1), (0x80 >> 1), false);
+    display1.showNumberDecEx(formatTime((int)timer1), (0x80 >> 1), true);
 
     while(true) {
       if(digitalRead(BTN_RESET)) resetArduino();
@@ -141,7 +136,7 @@ void loop() {
     }
   } else if(timer2 <= 0 && active == true) {
     timer2 = 0;
-    display2.showNumberDecEx(formatTime((int)timer2), (0x80 >> 1), false);
+    display2.showNumberDecEx(formatTime((int)timer2), (0x80 >> 1), true);
 
     while(true) {
       if(digitalRead(BTN_RESET)) resetArduino();
